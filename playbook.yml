@@ -11,8 +11,13 @@
         - upgrade-charm
 
     - name: link docker binary
-      sudo: true
       command: ln -sf /usr/bin/docker.io creates={{docker}}
+      tags:
+        - install
+        - upgrade-charm
+
+    - name: pairbox upstart conf
+      copy: src=files/pairbox_ssh.conf dest=/etc/init/pairbox_ssh.conf
       tags:
         - install
         - upgrade-charm
@@ -23,13 +28,24 @@
         - install
         - upgrade-charm
 
+    - name: Stop service
+      command: docker stop devbox
+      tags:
+        - stop
+        - config-changed
+
     - name: Start ssh
       command: docker run -d -P --name devbox cfpbj
       tags:
         - start
         - config-changed
 
-    - name: Stop service
-      command: docker stop devbox
+    - name: start port forwarding
+      service: name=pairbox_ssh state=started
       tags:
-        - stop
+        - start
+
+    - name: restart port forwarding
+      service: name=pairbox_ssh state=restarted
+      tags:
+        - config-changed
