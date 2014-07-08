@@ -1,0 +1,11 @@
+name: pairbox
+summary: Launch a docker box to pair
+maintainer: Whit Morriss <whit.morriss@canonical.com>
+description: |
+  A shared pairing solution
+categories:
+  - devel
+subordinate: false
+provides:
+  ssh:
+    interface: ssh
