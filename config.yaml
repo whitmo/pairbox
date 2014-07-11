@@ -1,14 +1,17 @@
 options:
-  string-option:
+  container-url:
     type: string
-    default: "Default Value"
-    description: "A short description of the configuration option"
-  boolean-option:
-    type: boolean
-    default: False
-    description: "A short description of the configuration option"
-  int-option:
+    default: "https://s3.amazonaws.com/cff-pairbox/cfpbj-0.1.tar.gz"
+    description: "Url for container image"
+  pub-keys:
+    type: string
+    default: ""
+    description: pub keys for accessing running box
+  ssh-port:
     type: int
-    default: 9001
-    description: "A short description of the configuration option"
-
+    default: 22222
+    description: "ssh port for launched container"
+  name:
+    type: string
+    default: "devbox"
+    description: "name for launched container"
