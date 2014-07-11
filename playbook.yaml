@@ -1,0 +1,72 @@
+- hosts: all
+  vars:
+    docker: /usr/bin/docker
+  tasks:
+    - name: Install required packages.
+      apt: pkg={{ item }} state=latest update_cache=yes
+      with_items:
+        - docker.io
+        - socat
+      tags:
+        - install
+        - upgrade-charm
+
+    - name: link docker binary
+      command: ln -sf /usr/bin/docker.io {{docker}} creates={{docker}}
+      tags:
+        - install
+        - upgrade-charm
+
+    - name: pairbox upstart conf
+      template: src=files/pairbox_ssh.conf dest=/etc/init/pairbox_ssh.conf
+      tags:
+        - install
+        - upgrade-charm
+        - config-changed
+
+    - name: import container
+      command: docker import {{container_url}} {{name}}_img
+      #get_url: dest=/tmp/pairbox_{{name}} url={{container_url}}
+      tags:
+        - install
+        - config-changed
+      when: "container_url != ''"
+
+    - name: Stop service
+      command: docker stop {{name}}
+      tags:
+        - stop
+        - config-changed
+      when: "container_url != ''"
+
+    - name: close ssh port
+      command: close-port {{ssh_port}}
+      tags:
+        - stop
+      when: "container_url != ''"
+
+    - name: Start devbox
+      command: docker run -d -P --name {{name}} {{name}}_img
+      tags:
+        - start
+        - config-changed
+      when: "container_url != ''"
+
+    - name: open ssh port
+      command: open-port {{ssh_port}}
+      tags:
+        - start
+        - config-changed
+      when: "container_url != ''"
+
+    - name: start port forwarding
+      service: name=pairbox_ssh state=started
+      tags:
+        - start
+      when: "container_url != ''"
+
+    - name: restart port forwarding
+      service: name=pairbox_ssh state=restarted
+      tags:
+        - config-changed
+      when: "container_url != ''"
