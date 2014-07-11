@@ -1,5 +1,5 @@
 name: pairbox
-summary: Launch a docker box to pair
+summary: Charm sets up a prepared container for pairing
 maintainer: Whit Morriss <whit.morriss@canonical.com>
 description: |
   A shared pairing solution
@@ -7,5 +7,5 @@ categories:
   - devel
 subordinate: false
 provides:
-  ssh:
+  shared_tmux:
     interface: ssh
