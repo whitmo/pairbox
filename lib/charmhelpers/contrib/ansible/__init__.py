@@ -104,6 +104,7 @@ def apply_playbook(playbook, tags=None):
         allow_hyphens_in_keys=False)
     call = [
         'ansible-playbook',
+        '-vv',
         '-c',
         'local',
         playbook,
